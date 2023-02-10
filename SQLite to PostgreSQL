@@ -1,0 +1,30 @@
+import sqlite3
+import psycopg2
+
+# Connect to the SQLite database
+sqlite_conn = sqlite3.connect("sqlite.db")
+sqlite_cursor = sqlite_conn.cursor()
+
+# Execute a query to retrieve the data from SQLite
+sqlite_cursor.execute("SELECT * FROM table_name")
+sqlite_data = sqlite_cursor.fetchall()
+
+# Connect to the PostgreSQL database
+postgres_conn = psycopg2.connect(
+    host="hostname",
+    database="database_name",
+    user="user_name",
+    password="password"
+)
+postgres_cursor = postgres_conn.cursor()
+
+# Iterate over the data from SQLite and insert it into PostgreSQL
+for row in sqlite_data:
+    postgres_cursor.execute("INSERT INTO table_name (column1, column2, column3) VALUES (%s, %s, %s)", row)
+
+# Commit the changes to the PostgreSQL database
+postgres_conn.commit()
+
+# Close the connections to the databases
+sqlite_conn.close()
+postgres_conn.close()
